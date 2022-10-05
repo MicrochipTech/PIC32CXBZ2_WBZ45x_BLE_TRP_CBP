@@ -34,9 +34,18 @@ Checkout the <a href="https://microchipsupport.force.com/s/" target="_blank">Tec
 
 This solution demonstrates how to enable fast data transfer between Bluetooth Low Energy Microchip hardware and Android Phone App.
 
-The Microchip software tools is offering an easy way to configure graphically the BLE stack running on the WBZ45x BLE 5.2 Wireless device. This solution is showing how to easily implement a Transparent Credit Based profile in order to speed-up the data transfer. Comparing to the Transparent UART profile which is using the normal GAP/GATT layers, the BLE Credit Base pipe service creates a L2CAP data channel that allow high speed data transfer over BLE. 
+The Microchip software tools is offering an easy way to configure graphically the BLE stack running on the WBZ45x BLE 5.2 Wireless device. This solution is showing-up how to easily implement a Transparent Credit Based profile in order to speed-up the data transfer. Comparing to the Transparent UART profile which is using the normal GAP/GATT layers, the BLE Credit Base pipe service creates a L2CAP data channel that allow high speed data transfer over BLE.
 
-Logical Link Control and Adaptation Protocol (L2CAP) is a protocol used in the Bluetooth standard that provides adaption between higher layers and the baseband layer of the Bluetooth stack.
+Transpare UART is based on GATT profile. It is a proprietary Bluetooth service from Microchip which has specific characteristics.
+
+In comparison, Credit Based Profile is a standard. Logical Link Control and Adaptation Protocol (L2CAP) is a protocol used in the Bluetooth standard that provides adaption between higher layers and the baseband layer of the Bluetooth stack. In a nutshell, L2CAP is a way to transfer buffer of bytes.
+
+Microchip Transparent UART has 3 characteristics:
+* 1 receiving characteristics
+* 1 transmitting characteristics
+* 1 control characteristics, to control the flow
+
+Credit Based Profile has his own flow control built-in. It is easy to use because it is already managed by the L2CAP protocol itself.
 
 <!--
 Below a short table comparing Transparent UART profile and Transparent Credit Based Profile with L2CAP implementation.
@@ -49,11 +58,32 @@ Below a short table comparing Transparent UART profile and Transparent Credit Ba
 
 -->
 
-Moreover, several benefits of Transparent Credit Based Profile with Android:
+Moreover, several benefits of Credit Based Profile with Operating systems:
 * L2CAP is standard in Android (minimum Android 10 is required) and in iOS too
-* Bluetooth object in operating system, Bluetooth sock is a default object, you treat that link as a normal BSD socket
+* standard API from the operating system
+* Bluetooth object in operating system, Bluetooth socket is a default object, you treat that link as a normal BSD socket
 * well suited for less than 500kB of data to transfer
 * able to reach 100kbpsec throughput with Android
+
+### CBPipe Application Layer
+
+In this sample code, the implementation of the Transparent Credit Based Profile is coming with the CBPipe Application layer.
+
+CBPipe is an application layer interface that manages all the BLE interactions and abstracting the complexity of the driver from the user application. To eliminate the complexity of BLE, the user is communicating only with the queue to push data or get data from the queue.
+
+<p align="center">
+<img src="images/cbpipe_block_diagram.png" width=480>
+</p>
+
+How it works ?
+
+* Messages putted in the queue by the user application will be taken in charge by the CBPipe and sent over BLE as soon as possible
+* Messages received on the BLE Hardware from a peer device, will be put automatically in the queue by the CBPipe implementation. The user application will be notified of the presence of a new and will access the queue at its convenience
+
+<p align="center">
+<img src="images/cbpipe_architecture.png" width=320>
+</p>
+
 
 ## Bill of materials<a name="step2"></a>
 
